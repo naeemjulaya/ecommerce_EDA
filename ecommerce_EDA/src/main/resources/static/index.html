@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loja Virtual - Catálogo</title>
+    <link rel="stylesheet" href="css/global.css">
+</head>
+<body class="bg-gray-50">
+
+    <!-- Header (Cabeçalho) -->
+    <header id="header-container" class="sticky top-0 z-50 bg-white border-b border-gray-200">
+        <!-- O cabeçalho será injetado aqui pelo JavaScript -->
+    </header>
+
+    <main class="flex-1 container mx-auto px-6 py-8">
+        <!-- Título da Página -->
+        <div class="mb-8">
+            <h2 class="text-gray-900 mb-2">Catálogo de Produtos</h2>
+            <p class="text-gray-600">Explore nossa seleção de cursos, livros e materiais educativos</p>
+        </div>
+
+        <!-- Filtros de Categoria -->
+        <div id="category-filters" class="mb-8 flex items-center gap-3 flex-wrap">
+            <!-- As categorias serão injetadas aqui -->
+        </div>
+
+        <!-- Grelha de Produtos -->
+        <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Os produtos serão injetados aqui pelo JavaScript -->
+        </div>
+
+        <!-- Secção de Informação sobre a Estrutura de Dados -->
+        <div class="mt-12 p-6 bg-white rounded-xl border border-gray-200">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 bg-[#00BFA6]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span class="text-[#00BFA6] text-xl">🌳</span>
+                </div>
+                <div>
+                    <h3 class="text-gray-900 mb-2">Organização Eficiente com Árvore AVL</h3>
+                    <p class="text-gray-600 text-sm">
+                        Nosso catálogo utiliza uma estrutura de Árvore AVL para organizar e buscar produtos 
+                        de forma otimizada, garantindo acesso rápido mesmo com milhares de itens.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer (Rodapé) -->
+    <footer id="footer-container" class="bg-gray-50 border-t border-gray-200 mt-auto">
+        <!-- O rodapé será injetado aqui -->
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/catalogo.js"></script>
+</body>
+</html>
