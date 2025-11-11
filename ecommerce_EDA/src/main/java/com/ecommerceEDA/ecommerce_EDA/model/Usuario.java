@@ -3,8 +3,8 @@ package com.ecommerceEDA.ecommerce_EDA.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
-import model.Avaliacao;
-import model.Pedido;
+import com.ecommerceEDA.ecommerce_EDA.model.Avaliacao;
+import com.ecommerceEDA.ecommerce_EDA.model.Pedido;
 
 @Entity // Adicionado
 @Table(name = "usuarios") // Adicionado

@@ -3,25 +3,35 @@ package com.ecommerceEDA.ecommerce_EDA.controller;
 import com.ecommerceEDA.ecommerce_EDA.model.Usuario;
 import com.ecommerceEDA.ecommerce_EDA.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        // Chamar authService.login()
-        // Retornar token JWT ou erro
-        return ResponseEntity.ok().build(); // Placeholder
+    @Autowired
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
-    // Outros endpoints de autenticação
+    @PostMapping("/register")
+    public String register(@RequestBody Usuario usuario) {
+        return authService.register(usuario);
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestParam String email, @RequestParam String senha) {
+        return authService.login(email, senha);
+    }
+
+    @PostMapping("/logout")
+    public String logout(@RequestParam String email) {
+        return authService.logout(email);
+    }
 }
+
 
 // DTO auxiliar para login
 class LoginRequest {
