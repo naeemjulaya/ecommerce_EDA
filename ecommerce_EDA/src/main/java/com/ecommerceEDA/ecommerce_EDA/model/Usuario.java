@@ -3,12 +3,10 @@ package com.ecommerceEDA.ecommerce_EDA.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
-import model.Avaliacao;
-import model.Pedido;
 
-@Entity // Adicionado
-@Table(name = "usuarios") // Adicionado
-public class Usuario { // Adicionado 'public'
+@Entity
+@Table(name = "usuarios")
+public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,40 +15,38 @@ public class Usuario { // Adicionado 'public'
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
-    private String senha; // Deve ser armazenada de forma criptografada
+    @Column(nullable = false) // A senha deve ser criptografada antes de salvar
+    private String senha;
 
     @Column(nullable = false)
     private String nome;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING) // Opcional: usar enum para tipo_usuario
-    private String tipoUsuario; // CLIENTE ou ADMIN
+    @Enumerated(EnumType.STRING)
+    private UsuarioTipo tipoUsuario;
+
+
+     // Ex: "CLIENTE", "ADMIN"
 
     @Column(name = "data_criacao", nullable = false, updatable = false)
     private LocalDateTime dataCriacao;
 
-    // Relacionamento com Pedidos
+    // Relacionamento com Pedidos (Um usuário pode ter muitos pedidos)
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Pedido> pedidos;
 
-    // Relacionamento com Avaliacoes
+    // Relacionamento com Avaliacoes (Um usuário pode fazer muitas avaliações)
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Avaliacao> avaliacoes;
 
     // Construtores
     public Usuario() {}
 
-    public Usuario(String email, String senha, String nome, String tipoUsuario) {
+    public Usuario(String email, String senha, String nome, UsuarioTipo tipoUsuario) {
         this.email = email;
-        this.senha = senha;
+        this.senha = senha; // Lembre-se de criptografar antes de atribuir
         this.nome = nome;
         this.tipoUsuario = tipoUsuario;
         this.dataCriacao = LocalDateTime.now();
-    }
-
-    public Usuario(List<Avaliacao> avaliacoes) {
-        this.avaliacoes = avaliacoes;
     }
 
     // Getters e Setters
@@ -66,8 +62,8 @@ public class Usuario { // Adicionado 'public'
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
 
-    public String getTipoUsuario() { return tipoUsuario; }
-    public void setTipoUsuario(String tipoUsuario) { this.tipoUsuario = tipoUsuario; }
+    public UsuarioTipo getTipoUsuario() { return tipoUsuario; }
+    public void setTipoUsuario(UsuarioTipo tipoUsuario) { this.tipoUsuario = tipoUsuario;}
 
     public LocalDateTime getDataCriacao() { return dataCriacao; }
     public void setDataCriacao(LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }

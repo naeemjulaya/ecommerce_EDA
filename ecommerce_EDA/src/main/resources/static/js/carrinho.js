@@ -1,10 +1,10 @@
-const loadCartPage = () => {
+/*const loadCartPage = () => {
     const container = document.getElementById('cart-container');
     if (!container) return;
     
     const cartItems = api.getCart();
     renderCart(cartItems);
-};
+};*/
 
 const renderCart = (cartItems) => {
     const container = document.getElementById('cart-container');

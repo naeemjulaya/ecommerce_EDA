@@ -1,31 +1,208 @@
-// Dados Mockados (Simulando um banco de dados)
-const mockProducts = [
-    { id: '1', name: 'Curso de Estruturas de Dados Avançadas', description: 'Aprenda sobre árvores, grafos, e mais.', price: 1250.00, image: 'https://images.unsplash.com/photo-1593720213428-28a5b9e94613?q=80&w=2070&auto=format&fit=crop', category: 'Cursos', recommended: true },
-    { id: '2', name: 'Livro "Algoritmos: Teoria e Prática"', description: 'Um guia completo sobre algoritmos.', price: 450.50, image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop', category: 'Livros' },
-    { id: '3', name: 'Pacote de Aulas Particulares de Programação', description: '10 horas de aulas com um especialista.', price: 4000.00, image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop', category: 'Aulas' },
-    { id: '4', name: 'Template de E-commerce Educacional', description: 'Template completo para sua loja.', price: 800.00, image: 'https://images.unsplash.com/photo-1587620962725-abab7fe55159?q=80&w=2231&auto=format&fit=crop', category: 'Templates' },
-    { id: '5', name: 'Curso de JavaScript Moderno (ES6+)', description: 'Do básico ao avançado em JS.', price: 990.00, image: 'https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?q=80&w=2070&auto=format&fit=crop', category: 'Cursos', recommended: true },
-    { id: '6', name: 'Livro "Código Limpo"', description: 'Um clássico sobre boas práticas de codificação.', price: 380.00, image: 'https://images.unsplash.com/photo-1589998059171-988d887df646?q=80&w=2070&auto=format&fit=crop', category: 'Livros' },
-    { id: '7', name: 'Mentoria de Carreira em TI', description: 'Planeje seu futuro na área de tecnologia.', price: 2500.00, image: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=1974&auto=format&fit=crop', category: 'Aulas', recommended: true },
-    { id: '8', name: 'Ícones para Projetos de UI/UX', description: 'Pacote com +500 ícones vetorizados.', price: 150.00, image: 'https://images.unsplash.com/photo-1629075110942-0d184761a2a8?q=80&w=2127&auto=format&fit=crop', category: 'Templates', recommended: true },
-];
-
-const mockOrders = [
-    { id: '#3021', userId: 'João Silva', items: [], total: 1700.50, status: 'completed', date: '2025-10-20' },
-    { id: '#3022', userId: 'Maria Santos', items: [], total: 450.50, status: 'processing', date: '2025-10-21' },
-    { id: '#3023', userId: 'Pedro Almeida', items: [], total: 4000.00, status: 'pending', date: '2025-10-22' },
-];
-
-// Funções da "API"
+// api.js - Objeto central para comunicação com o backend Spring Boot
 const api = {
-    getProducts: () => Promise.resolve(mockProducts),
-    getProductById: (id) => Promise.resolve(mockProducts.find(p => p.id === id)),
-    getRecommendedProducts: (currentProductId) => {
-        return Promise.resolve(mockProducts.filter(p => p.id !== currentProductId && p.recommended).slice(0, 4));
-    },
-    getOrders: () => Promise.resolve(mockOrders),
+    // --- URL BASE do Backend ---
+    BASE_URL: 'http://localhost:8082/api',
 
-    // Gerenciamento de Carrinho (localStorage)
+    // --- AUTENTICAÇÃO ---
+    login: async (email, senha) => {
+        try {
+            const res = await fetch(`${api.BASE_URL}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, senha })
+            });
+
+            if (res.ok) {
+                const user = await res.json();
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                return user;
+            } else {
+                const err = await res.text();
+                alert(err);
+                return null;
+            }
+        } catch (error) {
+            console.error('Erro no login:', error);
+            return null;
+        }
+    },
+
+    // --- REGISTRO ---
+    register: async (email, senha, nome, tipoUsuario) => {
+        try {
+            const res = await fetch(`${api.BASE_URL}/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, senha, nome, tipoUsuario })
+            });
+
+            if (res.ok) {
+                return await res.json();
+            } else {
+                const err = await res.text();
+                console.error('Erro no registro:', err);
+                return null;
+            }
+        } catch (error) {
+            console.error('Erro de rede no registro:', error);
+            return null;
+        }
+    },
+
+    getCurrentUser: () => {
+        const user = localStorage.getItem('currentUser');
+        return user ? JSON.parse(user) : null;
+    },
+
+    logout: () => {
+        localStorage.removeItem('currentUser');
+    },
+
+    // --- PRODUTOS ---
+    getProducts: async () => {
+        try {
+            const response = await fetch(`${api.BASE_URL}/produtos`);
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Produtos recebidos do backend:", data); // Log para debug
+                return data;
+            } else {
+                console.error('Erro ao buscar produtos:', response.status, await response.text());
+                return [];
+            }
+        } catch (error) {
+            console.error('Erro de rede ao buscar produtos:', error);
+            return [];
+        }
+    },
+
+    getProductById: async (id) => {
+        try {
+            const response = await fetch(`${api.BASE_URL}/produtos/${id}`);
+            if (response.ok) return await response.json();
+            else {
+                console.error('Erro ao buscar produto por ID:', response.status, await response.text());
+                return null;
+            }
+        } catch (error) {
+            console.error('Erro de rede ao buscar produto por ID:', error);
+            return null;
+        }
+    },
+
+    getProductsByName: async (nome) => {
+        try {
+            const response = await fetch(`${api.BASE_URL}/produtos/search?nome=${encodeURIComponent(nome)}`);
+            if (response.ok) return await response.json();
+            else {
+                console.error('Erro ao buscar produto por nome:', response.status, await response.text());
+                return [];
+            }
+        } catch (error) {
+            console.error('Erro de rede ao buscar produto por nome:', error);
+            return [];
+        }
+    },
+
+    // --- AVALIAÇÕES ---
+    getAvaliacoesByProdutoId: async (produtoId) => {
+        try {
+            const response = await fetch(`${api.BASE_URL}/avaliacoes/produto/${produtoId}`);
+            if (response.ok) return await response.json();
+            else {
+                console.error('Erro ao buscar avaliações:', response.status, await response.text());
+                return [];
+            }
+        } catch (error) {
+            console.error('Erro de rede ao buscar avaliações:', error);
+            return [];
+        }
+    },
+
+    salvarAvaliacao: async (avaliacaoData) => {
+        try {
+            const response = await fetch(`${api.BASE_URL}/avaliacoes`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(avaliacaoData),
+            });
+
+            if (response.ok) return await response.json();
+            else {
+                console.error('Erro ao salvar avaliação:', response.status, await response.text());
+                return null;
+            }
+        } catch (error) {
+            console.error('Erro de rede ao salvar avaliação:', error);
+            return null;
+        }
+    },
+
+    // --- RECOMENDAÇÕES ---
+    getRecommendedProducts: async (produtoId, profundidade = 2) => {
+        try {
+            const response = await fetch(`${api.BASE_URL}/recomendacoes/produto/${produtoId}?profundidade=${profundidade}`);
+            if (response.ok) return await response.json();
+            else {
+                console.error('Erro ao buscar recomendações:', response.status, await response.text());
+                return [];
+            }
+        } catch (error) {
+            console.error('Erro de rede ao buscar recomendações:', error);
+            return [];
+        }
+    },
+
+    // --- ORDENS / PEDIDOS ---
+    getOrders: async () => {
+        try {
+            const response = await fetch(`${api.BASE_URL}/pedidos`);
+            if (response.ok) return await response.json();
+            else {
+                console.error('Erro ao buscar pedidos:', response.status, await response.text());
+                return [];
+            }
+        } catch (error) {
+            console.error('Erro de rede ao buscar pedidos:', error);
+            return [];
+        }
+    },
+
+    createOrder: async (orderData) => {
+        try {
+            const response = await fetch(`${api.BASE_URL}/pedidos`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(orderData),
+            });
+
+            if (response.ok) return await response.json();
+            else {
+                console.error('Erro ao criar pedido:', response.status, await response.text());
+                return null;
+            }
+        } catch (error) {
+            console.error('Erro de rede ao criar pedido:', error);
+            return null;
+        }
+    },
+
+    processarProximoPedido: async () => {
+        try {
+            const response = await fetch(`${api.BASE_URL}/pedidos/fila/proximo`);
+            if (response.ok) return await response.json();
+            else if (response.status === 204) return null;
+            else {
+                console.error('Erro ao processar próximo pedido:', response.status, await response.text());
+                return null;
+            }
+        } catch (error) {
+            console.error('Erro de rede ao processar próximo pedido:', error);
+            return null;
+        }
+    },
+
+    // --- CARRINHO (Frontend localStorage) ---
     getCart: () => {
         const cart = localStorage.getItem('cart');
         return cart ? JSON.parse(cart) : [];
@@ -36,22 +213,16 @@ const api = {
     addToCart: (product) => {
         const cart = api.getCart();
         const existingItem = cart.find(item => item.product.id === product.id);
-        if (existingItem) {
-            existingItem.quantity++;
-        } else {
-            cart.push({ product, quantity: 1 });
-        }
+        if (existingItem) existingItem.quantity++;
+        else cart.push({ product, quantity: 1 });
         api.saveCart(cart);
     },
     updateCartItemQuantity: (productId, quantity) => {
         let cart = api.getCart();
         const item = cart.find(item => item.product.id === productId);
         if (item) {
-            if (quantity > 0) {
-                item.quantity = quantity;
-            } else {
-                cart = cart.filter(item => item.product.id !== productId);
-            }
+            if (quantity > 0) item.quantity = quantity;
+            else cart = cart.filter(item => item.product.id !== productId);
         }
         api.saveCart(cart);
     },
@@ -62,19 +233,6 @@ const api = {
     clearCart: () => {
         localStorage.removeItem('cart');
     },
-
-    // Gerenciamento de Usuário (sessionStorage)
-    login: (email) => {
-        const isAdmin = email.toLowerCase().includes('admin');
-        const user = { email, isAdmin };
-        sessionStorage.setItem('user', JSON.stringify(user));
-        return user;
-    },
-    logout: () => {
-        sessionStorage.removeItem('user');
-    },
-    getCurrentUser: () => {
-        const user = sessionStorage.getItem('user');
-        return user ? JSON.parse(user) : null;
-    }
 };
+
+console.log("API object loaded and ready to use with Spring Boot backend.");

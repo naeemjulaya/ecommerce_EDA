@@ -13,13 +13,17 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Relacionamento com Usuario (Muitos pedidos para um usuário)
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
+ // Ex: "EM_ESPERA", "ENVIADO", "ENTREGUE"
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING) // Opcional: usar enum para status
-    private String status; // EM_ESPERA, ENVIADO, ENTREGUE
+    private StatusPedido status;
+
 
     @Column(name = "data_pedido", nullable = false)
     private LocalDateTime dataPedido;
@@ -27,18 +31,20 @@ public class Pedido {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal total;
 
+    // Relacionamento com ItemPedido (Um pedido tem muitos itens)
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ItemPedido> itens;
 
     // Construtores
     public Pedido() {}
 
-    public Pedido(Usuario usuario, String status, BigDecimal total) {
-        this.usuario = usuario;
-        this.status = status;
-        this.total = total;
-        this.dataPedido = LocalDateTime.now();
-    }
+    public Pedido(Usuario usuario, StatusPedido status, BigDecimal total) {
+    this.usuario = usuario;
+    this.status = status;
+    this.total = total;
+    this.dataPedido = LocalDateTime.now();
+}
+
 
     // Getters e Setters
     public Long getId() { return id; }
@@ -47,8 +53,9 @@ public class Pedido {
     public Usuario getUsuario() { return usuario; }
     public void setUsuario(Usuario usuario) { this.usuario = usuario; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public StatusPedido getStatus() { return status; }
+    public void setStatus(StatusPedido status) { this.status = status; }
+
 
     public LocalDateTime getDataPedido() { return dataPedido; }
     public void setDataPedido(LocalDateTime dataPedido) { this.dataPedido = dataPedido; }
@@ -59,4 +66,3 @@ public class Pedido {
     public List<ItemPedido> getItens() { return itens; }
     public void setItens(List<ItemPedido> itens) { this.itens = itens; }
 }
-
