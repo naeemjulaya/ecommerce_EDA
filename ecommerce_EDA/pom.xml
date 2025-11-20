@@ -5,8 +5,8 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <!-- Correção: Use uma versão estável existente -->
-        <version>3.3.5</version> 
+        <!-- Upgraded to Spring Boot 3.5.x which includes Spring Framework 3.5 -->
+        <version>3.5.0</version> 
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.ecommerceEDA</groupId>
