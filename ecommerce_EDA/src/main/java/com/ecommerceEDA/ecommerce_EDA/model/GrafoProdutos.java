@@ -45,7 +45,8 @@ public class GrafoProdutos {
 
     // --- NOVO: Método para encontrar produtos recomendados usando BFS ---
     public Set<Long> encontrarRelacionadosBFS(Long idOrigem, int profundidadeMaxima) {
-        System.out.println("Iniciando BFS a partir do nó: " + idOrigem + " com profundidade máxima: " + profundidadeMaxima);
+        System.out.println(
+                "Iniciando BFS a partir do nó: " + idOrigem + " com profundidade máxima: " + profundidadeMaxima);
 
         if (!existeNo(idOrigem)) {
             System.out.println("Nó de origem " + idOrigem + " NÃO EXISTE no grafo.");
@@ -72,10 +73,10 @@ public class GrafoProdutos {
                 for (Long vizinhoId : adjacencias.getOrDefault(idAtual, new HashSet<>())) {
                     System.out.println("  Verificando vizinho: " + vizinhoId);
                     if (!visitados.contains(vizinhoId)) {
-                        System.out.println("    Adicionando vizinho não visitado: " + vizinhoId + " à fila e relacionados.");
                         visitados.add(vizinhoId);
                         fila.add(vizinhoId);
-                        if (nivelAtual > 0) { // Não adiciona o produto de origem
+                        // Correção: Adiciona se NÃO for o nó de origem
+                        if (!vizinhoId.equals(idOrigem)) {
                             relacionados.add(vizinhoId);
                         }
                     } else {
